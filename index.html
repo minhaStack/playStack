@@ -5,37 +5,92 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./assets/styles/style.css" />
-    <title>PlayLists minhaStack</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+    <title>Play Stack</title>
 </head>
 
 <body>
-    <nav class="container-principal">
-
-        <h1>Playlist minhaStack</h1>
-        <div class="container-buttons">
-            <ul>
-                <li class=" youtube-button">
-                    <a href="./assets/pages/youtube/index.html" class="def-button">
-                        <img src="assets/images/youtube.png" />
-                    </a>
-                </li>
-
-                <li class="spotify-button"><a href="./assets/pages/spotify/index.html" class="def-button ">
-                        <img src="./assets/images/spotify.png" />
-                    </a>
-                </li>
-            </ul>
+    <header>
+        <div class='logo'>
+            <a href="https://www.minhastack.com" target="_blank">
+                <img src="./assets/images/logoVerticalVazada.png" />
+            </a>
         </div>
-        <footer>
+    </header>
 
-            <div class='logo'>
-                <a href="https://www.minhastack.com" target="_blank">
-                    <img src="./assets/images/logoVerticalVazada.png" />
-                </a>
-            </div>
-        </footer>
+    <div class="container-principal">
+        <h1>
+            Play Stack<br />
+            <small>Sua stack de possibilidades</small>
+        </h1>
+    </div>
 
-    </nav>
+    <div class="content">
+        <h2>Serviços</h2>
+        <div class="container-buttons">
+            <a href="./services/qrcode">
+                <div class="optionButton services-button">
+                    <div class="optionDescription">
+                        Gerador de QR Code
+                    </div>
+                    <div class="optionContent">
+                        <span class="material-icons">
+                            qr_code
+                        </span>
+                    </div>
+                </div>
+            </a>
+            <a href="./services/requestAccess">
+                <div class="optionButton services-button">
+                    <div class="optionDescription">
+                        Obter um plano de serviços
+                    </div>
+                    <div class="optionContent">
+                        <span class="material-icons">
+                            airplane_ticket
+                        </span>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <h2>Plataformas</h2>
+        <div class="container-buttons">
+            <a href="./labs">
+                <div class="optionButton labs-button">
+                    <div class="optionDescription">
+                        Laboratório de projetos
+                    </div>
+                    <div class="optionContent">
+                        Labs
+                    </div>
+                </div>
+            </a>
+        </div>
+        <h2>Mídias da comunidade</h2>
+        <div class="container-buttons">
+            <a href="./assets/pages/youtube/index.html">
+                <div class="optionButton youtube-button" >
+                    <div class="optionDescription">
+                        Playlists no Youtube
+                    </div>
+                    <div class="optionContent">
+                        <img src="assets/images/youtube.png" />
+                    </div>
+                </div>
+            </a>
+            <a href="./assets/pages/spotify/index.html">
+                <div class="optionButton spotify-button">
+                    <div class="optionDescription">
+                        Playlists no Spotify
+                    </div>
+                    <div class="optionContent">
+                        <img src="./assets/images/spotify.png" />
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
 </body>
 
 </html>
