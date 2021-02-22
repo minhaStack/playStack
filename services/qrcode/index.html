@@ -24,8 +24,32 @@
                 QR Code<br />
                 <small>Gerador de QR Code</small>
             </h1>
-            <h2>Esse recurso ainda não está disponível.</h2>
+            
+            <br /><br />
+            <input id="qrCodeText" type="text" placeholder="Texto do QR Code" />
+            <input id="qrCodeButton" type="button" value="Obter QR Code" />
+            <img   id="qrCodeImg" src="" style="display: none;" />
         </div>
+        
+        <script>
+            let ENDPOINT_qrCode = "http://api-p01-vandsystems.kinghost.net:21624/qrcode";
+            let qrCodeButton = document.getElementById('qrCodeButton');
+            let qrCodeImg = document.getElementById('qrCodeImg');
+
+            qrCodeButton.onclick = function(){
+                let qrCodeText = document.getElementById('qrCodeText').value;
+                fetch(ENDPOINT_qrCode, {
+                    method: "POST", 
+                    body: JSON.stringify({
+                        content: qrCodeText
+                    })
+                }).then(res => {
+                    qrCodeImg.style.display = "block";
+                    qrCodeImg.style.width = "400px";
+                    qrCodeImg.src = res.base64Image;
+                });
+            }
+        </script>
 
         <footer>
             <div class='logo'>
