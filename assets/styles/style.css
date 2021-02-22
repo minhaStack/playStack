@@ -81,6 +81,12 @@ h1 small{
     padding: 50px;
 }
 
+.container-buttons a{
+    color: white;
+    font-size: 20px;
+    margin: 10px;
+}
+
 .optionButton{
     overflow: hidden;
     color: white;
@@ -106,4 +112,36 @@ h1 small{
 
 .optionContent .material-icons{
     font-size: 80px;
+}
+
+.container-passport{
+    text-align: center;
+}
+
+.services{
+    padding: 5%;
+}
+
+.services h1{
+    font-size: 38px;
+    color: black;
+}
+
+.services h1 small{
+    font-size: 22px;
+    width: 60%;
+    display: inline-block;
+    color: rgb(24, 24, 24);
+    line-height: 40px;
+}
+
+
+.services h2{
+    margin-top: 20px;
+    font-size: 22px;
+    color: rgb(50, 50, 50);
+}
+
+.services .material-icons{
+    font-size: 200px;
 }
