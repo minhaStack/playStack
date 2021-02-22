@@ -27,7 +27,7 @@
             
             <br /><br />
             <input id="qrCodeText" type="text" placeholder="Texto do QR Code" />
-            <input id="qrCodeButton" type="button" value="Obter QR Code" />
+            <input id="qrCodeButton" type="button" value="Obter QR Code" /><br /><br />
             <img   id="qrCodeImg" src="" style="display: none;" />
         </div>
         
@@ -38,15 +38,25 @@
 
             qrCodeButton.onclick = function(){
                 let qrCodeText = document.getElementById('qrCodeText').value;
+
+                let headers = new Headers();
+                headers.append("Content-type", "application/json");
+
                 fetch(ENDPOINT_qrCode, {
                     method: "POST", 
+                    mode: 'cors',
+                    headers,
                     body: JSON.stringify({
-                        content: qrCodeText
+                        "content": qrCodeText
                     })
                 }).then(res => {
-                    qrCodeImg.style.display = "block";
-                    qrCodeImg.style.width = "400px";
-                    qrCodeImg.src = res.base64Image;
+                    return res.json().then(function(json) {
+                        if(json.base64Image){
+                            qrCodeImg.style.display = "inline-block";
+                            qrCodeImg.style.width = "100px";
+                            qrCodeImg.src = json.base64Image;
+                        }
+                    });
                 });
             }
         </script>
