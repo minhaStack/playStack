@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../assets/styles/style.css"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+    <title>Código de barras | Play Stack</title>
+</head>
+<body> 
+    <header> 
+        <a href="../../index.html">
+            <img src="../../assets/images/homepage.png">
+        </a>
+    </header>
+    <nav class="container-passport">
+        
+        <div class="services">
+            <i class="fas fa-barcode material-icons"></i>
+            <h1>
+                Código de Barras<br />
+                <small>Gerador de Código de Barras</small>
+            </h1>
+            
+            <br /><br />
+            <input id="barCodeText" type="text" placeholder="Texto do Código de Barras" />
+            <input id="barCodeButton" type="button" value="Obter Código de Barras" /><br /><br />
+            <img   id="barCodeImg" src="" style="display: none;" />
+        </div>
+        
+        <script>
+            let ENDPOINT_barCode = "http://api-p01-vandsystems.kinghost.net:21624/barcode";
+            let barCodeButton = document.getElementById('barCodeButton');
+            let barCodeImg = document.getElementById('barCodeImg');
+
+            barCodeButton.onclick = function(){
+                let barCodeText = document.getElementById('barCodeText').value;
+
+                let headers = new Headers();
+                headers.append("Content-type", "application/json");
+
+                fetch(ENDPOINT_barCode, {
+                    method: "POST", 
+                    mode: 'cors',
+                    headers,
+                    body: JSON.stringify({
+                        "content": barCodeText
+                    })
+                }).then(res => {
+                    return res.json().then(function(json) {
+                        if(json.base64Image){
+                            barCodeImg.style.display = "inline-block";
+                            barCodeImg.style.width = "400px";
+                            barCodeImg.src = json.base64Image;
+                        }
+                    });
+                });
+            }
+        </script>
+
+        <footer>
+            <div class='logo'>
+                <a href="https://www.minhastack.com" target="_blank">
+                    <img style="filter: invert(100%)"  src="../../assets/images/logoVerticalVazada.png" alt="logo minha stéqui"/>
+                </a>
+            </div>
+        </footer>
+
+    </nav>
+</body>
+</html>

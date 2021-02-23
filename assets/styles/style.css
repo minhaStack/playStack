@@ -94,6 +94,7 @@ h1 small{
     margin: 10px;
     display: inline-block;
     border-radius: 5px;
+    height: 175px;
     width: 300px;
     text-align: center;
 }
@@ -112,6 +113,11 @@ h1 small{
 
 .optionContent .material-icons{
     font-size: 80px;
+}
+
+.optionContent img{
+    width: 50px;
+    height: auto;
 }
 
 .container-passport{
