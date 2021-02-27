@@ -55,12 +55,15 @@
                 qrCodeMultidataButton.onclick = function(){
                     let selectedField = qrCodeMultidataSelect.value;
 
+                    qrCodeMultidataImgs.innerHTML = '';
                     window.multidata.map(function(rowData, key){
                         if(rowData[selectedField]){
-                            let rowContent = rowData[selectedField];
-                            let img = document.createElement('img');
-                            qrCodeMultidataImgs.appendChild(img);
-                            processQrCode(rowContent, img);
+                            let rowContent = String(rowData[selectedField]);
+                            if(rowContent.length){
+                                let img = document.createElement('img');
+                                qrCodeMultidataImgs.appendChild(img);
+                                processQrCode(rowContent, img);
+                            }
                         }
                     })
                 }
