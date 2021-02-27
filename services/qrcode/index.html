@@ -26,6 +26,13 @@
             </h1>
             
             <br /><br />
+            <h4 id="multidataHelper" style="display: none;">
+                Dados foram carregados do serviço de tabela. Selecione o campo que será utilizado na geração dos QR Codes.
+                <select id="qrCodeMultidataSelect"></select>
+                <input id="qrCodeMultidataButton" type="button" value="Obter QR Codes" /><br /><br />
+                <div id="qrCodeMultidataImgs"></div>
+            </h4>
+
             <input id="qrCodeText" type="text" placeholder="Texto do QR Code" />
             <input id="qrCodeButton" type="button" value="Obter QR Code" /><br /><br />
             <img   id="qrCodeImg" src="" style="display: none;" />
@@ -34,11 +41,37 @@
         <script>
             let ENDPOINT_qrCode = "https://minhastack.herokuapp.com/qrcode";
             let qrCodeButton = document.getElementById('qrCodeButton');
+            let multidataHelper = document.getElementById('multidataHelper');
+            let qrCodeMultidataSelect = document.getElementById('qrCodeMultidataSelect');
+            let qrCodeMultidataButton = document.getElementById('qrCodeMultidataButton');
             let qrCodeImg = document.getElementById('qrCodeImg');
+
+            if(window.multidata){
+                multidataHelper.style.display = "block";   
+                Object.keys(window.multidata[0]).map(function(key){
+                    qrCodeMultidataSelect.innerHTML += '<option value="'+key+'">'+key+'</option>'
+                });
+
+                qrCodeMultidataButton.onclick = function(){
+                    let selectedField = qrCodeMultidataSelect.value;
+
+                    window.multidata.map(function(rowData, key){
+                        if(rowData[selectedField]){
+                            let rowContent = rowData[selectedField];
+                            let img = document.createElement('img');
+                            qrCodeMultidataImgs.appendChild(img);
+                            processQrCode(rowContent, img);
+                        }
+                    })
+                }
+            }
 
             qrCodeButton.onclick = function(){
                 let qrCodeText = document.getElementById('qrCodeText').value;
+                processQrCode(qrCodeText, qrCodeImg);
+            }
 
+            let processQrCode = function(qrCodeText, qrCodeImg){
                 let headers = new Headers();
                 headers.append("Content-type", "application/json");
 
