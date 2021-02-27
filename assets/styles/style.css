@@ -15,7 +15,7 @@ html,
 body {
     color: black;
     font-family: sans-serif;
-    text-align: center;
+    text-align: left;
     background-color: white;
     text-align: left;
 }
@@ -121,7 +121,7 @@ h1 small{
 }
 
 .container-passport{
-    text-align: center;
+    text-align: left;
 }
 
 .services{

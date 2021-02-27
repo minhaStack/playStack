@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../assets/styles/style.css"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+    <title>QR Code | Play Stack</title>
+</head>
+<body> 
+    <header> 
+        <a href="../../index.html">
+            <img src="../../assets/images/homepage.png">
+        </a>
+    </header>
+    <nav class="container-passport">
+        
+        <div class="services">
+            <span class="material-icons">
+                precision_manufacturing
+            </span>
+            <h1>
+                Aprendizagem de Máquina<br />
+                <small>Analise sequências de dados e obtenha previsões (Serviço em construção)</small>
+            </h1>
+
+            <br />
+            <h3>
+                Esse serviço utiliza o serviço de tabelas para obter dados no momento.<br />
+                Os dados obtidos serão utilizados para treinar um modelo de aprendizagem.<br />
+                Através desse modelo as previsoes serão geradas.
+            </h3>
+            
+            <br /><br />
+            <h4 id="multidataHelper" style="display: none;">
+                Dados foram carregados do serviço de tabela. Selecione o campo que será utilizado na geração dos QR Codes.
+                <select id="qrCodeMultidataSelect"></select>
+                <input id="qrCodeMultidataButton" type="button" value="Obter QR Codes" /><br /><br />
+                <div id="qrCodeMultidataImgs"></div>
+            </h4>
+        </div>
+        
+        <script>
+            let ENDPOINT_qrCode = "https://minhastack.herokuapp.com/qrcode";
+            let qrCodeButton = document.getElementById('qrCodeButton');
+            let multidataHelper = document.getElementById('multidataHelper');
+            let qrCodeMultidataSelect = document.getElementById('qrCodeMultidataSelect');
+            let qrCodeMultidataButton = document.getElementById('qrCodeMultidataButton');
+            let qrCodeImg = document.getElementById('qrCodeImg');
+
+            if(window.multidata){
+                multidataHelper.style.display = "block";   
+                Object.keys(window.multidata[0]).map(function(key){
+                    qrCodeMultidataSelect.innerHTML += '<option value="'+key+'">'+key+'</option>'
+                });
+
+                qrCodeMultidataButton.onclick = function(){
+                    let selectedField = qrCodeMultidataSelect.value;
+
+                    qrCodeMultidataImgs.innerHTML = '';
+                    window.multidata.map(function(rowData, key){
+                        if(rowData[selectedField]){
+                            let rowContent = String(rowData[selectedField]);
+                            if(rowContent.length){
+                                let img = document.createElement('img');
+                                qrCodeMultidataImgs.appendChild(img);
+                                processQrCode(rowContent, img);
+                            }
+                        }
+                    })
+                }
+            }
+        </script>
+
+        <footer>
+            <div class='logo'>
+                <a href="https://www.minhastack.com" target="_blank">
+                    <img style="filter: invert(100%)"  src="../../assets/images/logoVerticalVazada.png" alt="logo minha stéqui"/>
+                </a>
+            </div>
+        </footer>
+
+    </nav>
+</body>
+</html>
