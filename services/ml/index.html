@@ -22,54 +22,110 @@
             </span>
             <h1>
                 Aprendizagem de Máquina<br />
-                <small>Analise sequências de dados e obtenha previsões (Serviço em construção)</small>
+                <small>Analise sequências de dados</small>
             </h1>
 
             <br />
             <h3>
                 Esse serviço utiliza o serviço de tabelas para obter dados no momento.<br />
                 Os dados obtidos serão utilizados para treinar um modelo de aprendizagem.<br />
-                Através desse modelo as previsoes serão geradas.
             </h3>
             
             <br /><br />
             <h4 id="multidataHelper" style="display: none;">
-                Dados foram carregados do serviço de tabela. Selecione o campo que será utilizado na geração dos QR Codes.
-                <select id="qrCodeMultidataSelect"></select>
-                <input id="qrCodeMultidataButton" type="button" value="Obter QR Codes" /><br /><br />
-                <div id="qrCodeMultidataImgs"></div>
+                Dados foram carregados do serviço de tabela.<br />
+                Selecione o campo que será analisado.<br />
+                Esse campo será analisado de 15 em 15 registros e ao final será gerada uma previsão dos próximos 15 registros.<br />
+                <select id="multidataSelect"></select>
+                <input id="multidataButton" type="button" value="Obter tabela atualizada" /><br /><br />
+                <div id="multidataResult"></div>
             </h4>
         </div>
         
         <script>
-            let ENDPOINT_qrCode = "https://minhastack.herokuapp.com/qrcode";
-            let qrCodeButton = document.getElementById('qrCodeButton');
+            let ENDPOINT_ml = "https://minhastack.herokuapp.com/ml";
             let multidataHelper = document.getElementById('multidataHelper');
-            let qrCodeMultidataSelect = document.getElementById('qrCodeMultidataSelect');
-            let qrCodeMultidataButton = document.getElementById('qrCodeMultidataButton');
-            let qrCodeImg = document.getElementById('qrCodeImg');
+            let multidataSelect = document.getElementById('multidataSelect');
+            let multidataButton = document.getElementById('multidataButton');
+            let multidataResult = document.getElementById('multidataResult');
 
             if(window.multidata){
-                multidataHelper.style.display = "block";   
+                multidataHelper.style.display = "block";
+
                 Object.keys(window.multidata[0]).map(function(key){
-                    qrCodeMultidataSelect.innerHTML += '<option value="'+key+'">'+key+'</option>'
+                    multidataSelect.innerHTML += '<option value="'+key+'">'+key+'</option>'
                 });
 
-                qrCodeMultidataButton.onclick = function(){
-                    let selectedField = qrCodeMultidataSelect.value;
-
-                    qrCodeMultidataImgs.innerHTML = '';
-                    window.multidata.map(function(rowData, key){
-                        if(rowData[selectedField]){
-                            let rowContent = String(rowData[selectedField]);
-                            if(rowContent.length){
-                                let img = document.createElement('img');
-                                qrCodeMultidataImgs.appendChild(img);
-                                processQrCode(rowContent, img);
-                            }
-                        }
-                    })
+                multidataButton.onclick = function(){
+                    let selectedField = multidataSelect.value;
+                    multidataResult.innerHTML = '';
+                    processMLInput(selectedField, window.multidata);
                 }
+            }
+
+            let processMLInput = function(selectedField, allData){
+                let headers = new Headers();
+                headers.append("Content-type", "application/json");
+
+                fetch(ENDPOINT_ml, {
+                    method: "POST", 
+                    mode: 'cors',
+                    headers,
+                    body: JSON.stringify({
+                        allData,
+                        selectedField
+                    })
+                }).then(res => {
+                    return res.json().then(function(json) {
+                        if(json.tableData){
+                            let table = document.createElement('table');
+
+                            let tr = document.createElement('tr');
+                            table.appendChild(tr);
+
+                            Object.keys(allData[0]).map(function(rowKey){
+                                let td = document.createElement('th');
+                                td.textContent = rowKey;
+                                tr.appendChild(td);
+                            });
+
+                            Object.keys(allData).map(function(dataElementKey){
+                                let dataElement = allData[dataElementKey];
+                                
+                                let tr = document.createElement('tr');
+                                table.appendChild(tr);
+
+                                Object.keys(allData[0]).map(function(rowKey){
+                                    let td = document.createElement('td');
+                                    
+                                    if(dataElement[rowKey]){
+                                        td.textContent = dataElement[rowKey];
+                                    }
+                                    
+                                    tr.appendChild(td);
+                                });
+                            });
+
+                            json.tableData.map(function(rowData){
+                                let tr = document.createElement('tr');
+                                table.appendChild(tr);
+
+                                Object.keys(allData[0]).map(function(rowKey){
+                                    let td = document.createElement('td');
+                                    
+                                    if(rowKey === selectedField){
+                                        td.textContent = rowData;
+                                    }
+
+                                    tr.appendChild(td);
+                                });
+                            });
+
+                            multidataResult.appendChild(table);
+                            multidataSharedInfo = json.tableData;
+                        }
+                    });
+                });
             }
         </script>
 

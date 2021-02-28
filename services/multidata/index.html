@@ -29,7 +29,8 @@
             <input id="multidataButton" type="button" value="Obter dados" /><br /><br />
 
             <div style="display: none;" id="actions">
-                <button id="qrCodeShortcutButton">Acessar serviço de QR Code</button>
+                <button id="qrCodeShortcutButton">Acessar serviço de QR Code</button><br />
+                <button id="mlShortcutButton">Acessar serviço de Aprendizagem de Máquina</button>
             </div>
         </div>
         
@@ -37,6 +38,7 @@
             let ENDPOINT_multidata = "https://minhastack.herokuapp.com/multidata";
             let multidataButton = document.getElementById('multidataButton');
             let qrCodeShortcutButton = document.getElementById('qrCodeShortcutButton');
+            let mlShortcutButton = document.getElementById('mlShortcutButton');
             let actionsElement = document.getElementById('actions');
             let multidataSharedInfo = [];
 
@@ -74,6 +76,11 @@
 
             qrCodeShortcutButton.onclick = function(){
                 let service = window.open('../qrcode/index.html', '_blank');
+                service.window.multidata = multidataSharedInfo;
+            }
+
+            mlShortcutButton.onclick = function(){
+                let service = window.open('../ml/index.html', '_blank');
                 service.window.multidata = multidataSharedInfo;
             }
 
