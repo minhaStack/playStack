@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../assets/styles/style.css"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+    <title>Imagem para Vídeo | Play Stack</title>
+</head>
+<body> 
+    <header> 
+        <a href="../../index.html">
+            <img src="../../assets/images/homepage.png">
+        </a>
+    </header>
+    <nav class="container-passport">
+        
+        <div class="services">
+            <span class="material-icons">
+                movie
+            </span>
+            <h1>
+                Imagem para Vídeo<br />
+                <small>Converte um conjunto de imagens para vídeo</small>
+            </h1>
+            
+            <br /><br />
+            <div id="options">
+                <button id="addImage">Adicionar Imagem</button>
+            </div>
+
+            <button id="generateVideo">Gerar vídeo</button>
+            <video id="video" style="display: none;"></video>
+        </div>
+        
+        <script>
+            let ENDPOINT_imageToVideo = "http://minhastack.herokuapp.com/imageToVideo";
+            let options = document.getElementById('options');
+            let addImageElement = document.getElementById('addImage');
+            let generateVideo = document.getElementById('generateVideo');
+            let videoElement = document.getElementById('video');
+            let images = {};
+            let id = 0;
+            
+            addImageElement.onclick = () => {
+                id++;
+                const imageRow = document.createElement('div');
+
+                const imageFile = document.createElement('input');
+                imageFile.type = 'file';
+
+                const deleteImage = document.createElement('button');
+                deleteImage.textContent = 'Excluir';
+
+                deleteImage.onclick = function(){
+                    imageRow.remove();
+                    delete images[id];
+                }
+
+                imageRow.appendChild(imageFile)
+                imageRow.appendChild(deleteImage)
+                options.appendChild(imageRow)
+
+                images[id] = {
+                    deleteImage,
+                    imageFile,
+                    imageRow
+                }
+            }
+
+            let uploadData = (file) => {
+                return new Promise((success, reject) => {
+                    try{
+                        const reader = new FileReader();
+
+                        reader.addEventListener("load", function () {
+                            success({ error: false, data: reader.result });
+                        }, false);
+
+                        if (file) {
+                            reader.readAsDataURL(file);
+                        }
+                    } catch(e){
+                        reject({
+                            error: e,
+                            data: null
+                        })
+                    }
+                });
+            }
+
+            let sendData = (uploadedImages) => {
+                let headers = new Headers();
+                headers.append("Content-type", "application/json");
+
+                fetch(ENDPOINT_imageToVideo, {
+                    method: "POST", 
+                    mode: 'cors',
+                    headers,
+                    body: JSON.stringify({
+                        "content": uploadedImages
+                    })
+                }).then(res => {
+                    return res.json().then(function(json) {
+                        if(json.base64Video){
+                            videoElement.style.display = 'none';
+                            videoElement.src = "data:video/mp4;charset=utf-8," + json.base64Video;
+                        }
+                    });
+                });
+            }
+
+            generateVideo.onclick = function(){
+                let uploadedImages = [];
+                
+                Object.values(images).map(async (imageElement, key) => {
+                    let uploadInfo = await (uploadData(imageElement.imageFile.files[0]));
+                    uploadedImages.push(uploadInfo.data);
+
+                    if(Object.keys(images).length - 1 === key){
+                        sendData(uploadedImages);
+                    }
+                });
+            }
+
+        </script>
+
+        <footer>
+            <div class='logo'>
+                <a href="https://www.minhastack.com" target="_blank">
+                    <img style="filter: invert(100%)"  src="../../assets/images/logoVerticalVazada.png" alt="logo minha stéqui"/>
+                </a>
+            </div>
+        </footer>
+
+    </nav>
+</body>
+</html>
