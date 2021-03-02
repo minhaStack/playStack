@@ -158,6 +158,18 @@
             }
 
             generateVideo.onclick = function(){
+                
+                let uploadImages = () => {
+                    Object.values(images).map(async (imageElement, key) => {
+                        let uploadInfo = await (uploadData(imageElement.imageFile.files[0]));
+                        uploadedImages.push(uploadInfo.data);
+
+                        if(Object.keys(images).length - 1 === key){
+                            sendData(uploadedImages, uploadedAudios);
+                        }
+                    });
+                };
+                
                 generateVideo.disabled = true;
                 let uploadedAudios = [];
                 let uploadedImages = [];
@@ -172,19 +184,8 @@
                         }
                     });
                 } else {
-                    uploadImages();v
+                    uploadImages();
                 }
-
-                let uploadImages = () => {
-                    Object.values(images).map(async (imageElement, key) => {
-                        let uploadInfo = await (uploadData(imageElement.imageFile.files[0]));
-                        uploadedImages.push(uploadInfo.data);
-
-                        if(Object.keys(images).length - 1 === key){
-                            sendData(uploadedImages, uploadedAudios);
-                        }
-                    });
-                };
             }
 
         </script>
