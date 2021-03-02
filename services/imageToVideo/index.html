@@ -25,15 +25,19 @@
                 Imagem para Vídeo<br />
                 <small>Converte um conjunto de imagens para vídeo</small>
             </h1>
+
+            <br /><br />
+            <b>Tempo que cada imagem irá permanecer na tela (em segundos):</b>
+            <input type="number" value="5" id="imageTimeOnScreen" />
             
             <br /><br />
             <div id="options">
-                <button id="addImage">Adicionar Imagem</button>
+                <button id="addImage">Adicionar Imagem (Formatos: png, jpeg)</button>
             </div>
             
             <br /><br />
             <div id="audioOptions">
-                <button id="addAudio">Adicionar Áudio (Apenas um áudio por vídeo)</button>
+                <button id="addAudio">Adicionar Áudio (Apenas um, formatos: mp3, ogg)</button>
             </div>
 
             <br /><br />
@@ -50,6 +54,7 @@
             let addImageElement = document.getElementById('addImage');
             let addAudioElement = document.getElementById('addAudio');
             let generateVideo = document.getElementById('generateVideo');
+            let imageTimeOnScreen = document.getElementById('imageTimeOnScreen');
             let videoElement = document.getElementById('video');
             let images = {};
             let audios = {};
@@ -141,7 +146,8 @@
                     headers,
                     body: JSON.stringify({
                         "content": uploadedImages,
-                        "audio": uploadedAudios
+                        "audio": uploadedAudios,
+                        "imageTimeOnScreen": imageTimeOnScreen.value
                     })
                 }).then(res => {
                     return res.json().then(function(json) {
@@ -169,7 +175,7 @@
                         }
                     });
                 };
-                
+
                 generateVideo.disabled = true;
                 let uploadedAudios = [];
                 let uploadedImages = [];
