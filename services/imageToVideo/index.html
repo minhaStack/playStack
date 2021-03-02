@@ -33,10 +33,13 @@
             
             <br /><br />
             <div id="audioOptions">
-                <button id="addAudio">Adicionar Áudio</button>
+                <button id="addAudio">Adicionar Áudio (Apenas um áudio por vídeo)</button>
             </div>
 
+            <br /><br />
             <button id="generateVideo">Gerar vídeo</button>
+
+            <br /><br />
             <video controls id="video" style="display: none;"></video>
         </div>
         
@@ -80,28 +83,30 @@
 
             
             addAudioElement.onclick = () => {
-                id++;
-                const audioRow = document.createElement('div');
+                if(Object.keys(audios).length === 0){
+                    id++;
+                    const audioRow = document.createElement('div');
 
-                const audioFile = document.createElement('input');
-                audioFile.type = 'file';
+                    const audioFile = document.createElement('input');
+                    audioFile.type = 'file';
 
-                const deleteAudio = document.createElement('button');
-                deleteAudio.textContent = 'Excluir';
+                    const deleteAudio = document.createElement('button');
+                    deleteAudio.textContent = 'Excluir';
 
-                deleteAudio.onclick = function(){
-                    audioRow.remove();
-                    delete audios[id];
-                }
+                    deleteAudio.onclick = function(){
+                        audioRow.remove();
+                        delete audios[id];
+                    }
 
-                audioRow.appendChild(audioFile)
-                audioRow.appendChild(deleteAudio)
-                audioOptions.appendChild(audioRow)
+                    audioRow.appendChild(audioFile)
+                    audioRow.appendChild(deleteAudio)
+                    audioOptions.appendChild(audioRow)
 
-                audios[id] = {
-                    deleteAudio,
-                    audioFile,
-                    audioFile
+                    audios[id] = {
+                        deleteAudio,
+                        audioFile,
+                        audioFile
+                    }
                 }
             }
 
@@ -157,14 +162,18 @@
                 let uploadedAudios = [];
                 let uploadedImages = [];
                 
-                Object.values(audios).map(async (audioElement, key) => {
-                    let uploadInfo = await (uploadData(audioElement.audioFile.files[0]));
-                    uploadedAudios.push(uploadInfo.data);
-                    
-                    if(Object.keys(audios).length - 1 === key){
-                        uploadImages();
-                    }
-                });
+                if(Object.values(audios).length > 0){
+                    Object.values(audios).map(async (audioElement, key) => {
+                        let uploadInfo = await (uploadData(audioElement.audioFile.files[0]));
+                        uploadedAudios.push(uploadInfo.data);
+                        
+                        if(Object.keys(audios).length - 1 === key){
+                            uploadImages();
+                        }
+                    });
+                } else {
+                    uploadImages();v
+                }
 
                 let uploadImages = () => {
                     Object.values(images).map(async (imageElement, key) => {
