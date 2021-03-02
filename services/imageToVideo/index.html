@@ -30,18 +30,26 @@
             <div id="options">
                 <button id="addImage">Adicionar Imagem</button>
             </div>
+            
+            <br /><br />
+            <div id="audioOptions">
+                <button id="addAudio">Adicionar Áudio</button>
+            </div>
 
             <button id="generateVideo">Gerar vídeo</button>
-            <video id="video" style="display: none;"></video>
+            <video controls id="video" style="display: none;"></video>
         </div>
         
         <script>
             let ENDPOINT_imageToVideo = "https://minhastack.herokuapp.com/imageToVideo";
             let options = document.getElementById('options');
+            let audioOptions = document.getElementById('audioOptions');
             let addImageElement = document.getElementById('addImage');
+            let addAudioElement = document.getElementById('addAudio');
             let generateVideo = document.getElementById('generateVideo');
             let videoElement = document.getElementById('video');
             let images = {};
+            let audios = {};
             let id = 0;
             
             addImageElement.onclick = () => {
@@ -70,6 +78,33 @@
                 }
             }
 
+            
+            addAudioElement.onclick = () => {
+                id++;
+                const audioRow = document.createElement('div');
+
+                const audioFile = document.createElement('input');
+                audioFile.type = 'file';
+
+                const deleteAudio = document.createElement('button');
+                deleteAudio.textContent = 'Excluir';
+
+                deleteAudio.onclick = function(){
+                    audioRow.remove();
+                    delete audios[id];
+                }
+
+                audioRow.appendChild(audioFile)
+                audioRow.appendChild(deleteAudio)
+                audioOptions.appendChild(audioRow)
+
+                audios[id] = {
+                    deleteAudio,
+                    audioFile,
+                    audioFile
+                }
+            }
+
             let uploadData = (file) => {
                 return new Promise((success, reject) => {
                     try{
@@ -91,7 +126,7 @@
                 });
             }
 
-            let sendData = (uploadedImages) => {
+            let sendData = (uploadedImages = [], uploadedAudios = []) => {
                 let headers = new Headers();
                 headers.append("Content-type", "application/json");
 
@@ -100,29 +135,47 @@
                     mode: 'cors',
                     headers,
                     body: JSON.stringify({
-                        "content": uploadedImages
+                        "content": uploadedImages,
+                        "audio": uploadedAudios
                     })
                 }).then(res => {
                     return res.json().then(function(json) {
                         if(json.base64Video){
-                            videoElement.style.display = 'none';
-                            videoElement.src = "data:video/mp4;charset=utf-8," + json.base64Video;
+                            videoElement.style.display = 'block';
+                            videoElement.src = 'data:video/mp4;base64,' + json.base64Video;
+                            generateVideo.disabled = false;
                         }
                     });
+                }).catch(() => {
+                    alert("Ocorreu um erro");
+                    generateVideo.disabled = false;
                 });
             }
 
             generateVideo.onclick = function(){
+                generateVideo.disabled = true;
+                let uploadedAudios = [];
                 let uploadedImages = [];
                 
-                Object.values(images).map(async (imageElement, key) => {
-                    let uploadInfo = await (uploadData(imageElement.imageFile.files[0]));
-                    uploadedImages.push(uploadInfo.data);
-
-                    if(Object.keys(images).length - 1 === key){
-                        sendData(uploadedImages);
+                Object.values(audios).map(async (audioElement, key) => {
+                    let uploadInfo = await (uploadData(audioElement.audioFile.files[0]));
+                    uploadedAudios.push(uploadInfo.data);
+                    
+                    if(Object.keys(audios).length - 1 === key){
+                        uploadImages();
                     }
                 });
+
+                let uploadImages = () => {
+                    Object.values(images).map(async (imageElement, key) => {
+                        let uploadInfo = await (uploadData(imageElement.imageFile.files[0]));
+                        uploadedImages.push(uploadInfo.data);
+
+                        if(Object.keys(images).length - 1 === key){
+                            sendData(uploadedImages, uploadedAudios);
+                        }
+                    });
+                };
             }
 
         </script>
