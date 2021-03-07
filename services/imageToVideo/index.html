@@ -44,6 +44,9 @@
             <button id="generateVideo">Gerar vídeo</button>
 
             <br /><br />
+            <b id="status">Configure o vídeo que será gerado.</b><br />
+
+            <br /><br />
             <video controls id="video" style="display: none;"></video>
         </div>
         
@@ -56,6 +59,7 @@
             let generateVideo = document.getElementById('generateVideo');
             let imageTimeOnScreen = document.getElementById('imageTimeOnScreen');
             let videoElement = document.getElementById('video');
+            let status = document.getElementById('status');
             let images = {};
             let audios = {};
             let id = 0;
@@ -151,16 +155,60 @@
                     })
                 }).then(res => {
                     return res.json().then(function(json) {
+                        verifyJob(json);
+                    });
+                }).catch(() => {
+                    alert("Ocorreu um erro");
+                    generateVideo.disabled = false;
+                });
+            }
+
+            let verifyJobInServer = (jobId) => {
+                let headers = new Headers();
+                headers.append("Content-type", "application/json");
+
+                fetch(ENDPOINT_imageToVideo, {
+                    method: "POST", 
+                    mode: 'cors',
+                    headers,
+                    body: JSON.stringify({
+                        jobId
+                    })
+                }).then(res => {
+                    return res.json().then(function(json) {
                         if(json.base64Video){
-                            videoElement.style.display = 'block';
-                            videoElement.src = 'data:video/mp4;base64,' + json.base64Video;
-                            generateVideo.disabled = false;
+                            status.innerHTML = 'Video carregado.';
+                            updateVideoSrc(json);
+                        } else {
+                            status.innerHTML = 'Vídeo em processamento. Tentando novamente em um segundo.'; 
+
+                            setTimeout(function(){
+                                status.innerHTML = 'Verificando job: ' + json.jobId;
+                                verifyJobInServer(json.jobId)
+                            }, 1000);
                         }
                     });
                 }).catch(() => {
                     alert("Ocorreu um erro");
                     generateVideo.disabled = false;
                 });
+            }
+
+            let verifyJob = function(json){
+                if(json.jobId){
+                    status.innerHTML = 'Processamento de vídeo iniciado. ID de tarefa: ' + json.jobId;
+                    
+                    setTimeout(function(){
+                        status.innerHTML = 'Verificando job: ' + json.jobId;
+                        verifyJobInServer(json.jobId)
+                    }, 1000);
+                }
+            }
+
+            let updateVideoSrc = function(json){
+                videoElement.style.display = 'block';
+                videoElement.src = 'data:video/mp4;base64,' + json.base64Video;
+                generateVideo.disabled = false;
             }
 
             generateVideo.onclick = function(){
