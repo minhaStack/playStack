@@ -183,7 +183,7 @@
                             status.innerHTML = 'Vídeo em processamento. Tentando novamente em um segundo.'; 
 
                             setTimeout(function(){
-                                status.innerHTML = 'Verificando job: ' + json.jobId;
+                                status.innerHTML = 'Verificando: ' + json.jobId;
                                 verifyJobInServer(json.jobId)
                             }, 1000);
                         }
